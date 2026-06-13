@@ -31,6 +31,17 @@ MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_MB", "10")) * 1024 * 1024
 state: dict = {}
 
 
+CAREER_GOAL_SKILL_MAP: dict[str, list[str]] = {
+    "data scientist": ["python", "statistics", "machine learning", "sql", "data analysis", "tableau"],
+    "data analyst": ["sql", "data analysis", "tableau", "power bi", "statistics"],
+    "machine learning engineer": ["python", "machine learning", "tensorflow", "docker", "aws"],
+    "ai engineer": ["python", "machine learning", "deep learning", "nlp", "tensorflow"],
+    "product manager": ["communication", "agile", "scrum", "leadership", "problem solving"],
+    "business analyst": ["sql", "data analysis", "communication", "agile", "tableau"],
+    "cloud engineer": ["aws", "azure", "docker", "kubernetes", "git"],
+}
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     _load_models()
@@ -275,6 +286,7 @@ def recommend_learning(req: LearningPathRequest):
 )
 async def full_pipeline(
     file: UploadFile = File(...),
+    career_goal: Optional[str] = Form(None),
     target_category: Optional[str] = Form(None),
 ):
     """
@@ -318,7 +330,10 @@ async def full_pipeline(
         top_match = (
             job_match_result["matches"][0] if job_match_result["matches"] else None
         )
-        target_job_skills = top_match.get("required_skills", []) if top_match else []
+        selected_goal = (career_goal or target_category or "").strip().lower()
+        target_job_skills = CAREER_GOAL_SKILL_MAP.get(selected_goal, [])
+        if not target_job_skills:
+            target_job_skills = top_match.get("required_skills", []) if top_match else []
         gap_result = gap_analyzer.analyze(user_skills, target_job_skills)
 
         # Step 4: Learning recommendations for missing skills
@@ -327,6 +342,7 @@ async def full_pipeline(
         return {
             "status": "success",
             "data": {
+                "career_goal": career_goal or target_category or "",
                 "resume_parse": {
                     "extracted_skills": user_skills,
                     "skill_count": len(user_skills),

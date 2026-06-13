@@ -2,6 +2,17 @@ import re
 
 
 class GapAnalyzer:
+    DESIGN_SKILL_PATHS = {
+        "creative": ["ui/ux"],
+        "design": ["figma"],
+        "graphic": ["photoshop"],
+        "media": ["photoshop"],
+        "graphic design": ["photoshop", "figma"],
+        "visual design": ["ui/ux"],
+        "ui design": ["ui/ux"],
+        "ux design": ["ui/ux"],
+    }
+
     def __init__(self, skill_taxonomy: dict, learning_resources: dict):
         self.skill_taxonomy = skill_taxonomy
         self.resources = learning_resources
@@ -68,19 +79,27 @@ class GapAnalyzer:
 
         for skill in missing_skills:
             skill_lower = skill.lower().strip()
-            resource_title = self.resources.get(skill_lower)
-            if resource_title:
+            resource_keys = [skill_lower, *self.DESIGN_SKILL_PATHS.get(skill_lower, [])]
+            resources = []
+
+            for resource_key in resource_keys:
+                resource_title = self.resources.get(resource_key)
+                if resource_title:
+                    resources.append(
+                        {
+                            "title": resource_title,
+                            "provider": "IBM SkillsBuild",
+                            "url": "https://skillsbuild.org/",
+                            "level": "Intermediate",
+                        }
+                    )
+                    break
+
+            if resources:
                 recommendations.append(
                     {
                         "skill": skill_lower,
-                        "resources": [
-                            {
-                                "title": resource_title,
-                                "provider": "IBM SkillsBuild",
-                                "url": "https://skillsbuild.org/",
-                                "level": "Intermediate",
-                            }
-                        ],
+                        "resources": resources,
                     }
                 )
             else:
