@@ -44,9 +44,10 @@ class SimilarityEngine:
         try:
             from sentence_transformers import SentenceTransformer
             self._sbert_model = SentenceTransformer("all-MiniLM-L6-v2")
-            print("✅ SBERT encoder loaded.")
+            print("[OK] SBERT encoder loaded.")
         except Exception as e:
-            print(f"⚠️ SBERT encoder not available: {e}")
+            # Fallback aman ke TF-IDF saja. Pakai ASCII (hindari crash encoding di Windows).
+            print(f"[WARN] SBERT encoder not available, using TF-IDF only: {e}")
         return self._sbert_model
 
     def get_matches(self, resume_text: str, top_k: int = 10) -> dict:
