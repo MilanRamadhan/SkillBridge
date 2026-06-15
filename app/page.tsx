@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import {
   ArrowRight,
-  PlayCircle,
   Brain,
   FileText,
   GraduationCap,
@@ -189,6 +188,25 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const revealElements = document.querySelectorAll<HTMLElement>("[data-reveal]");
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    revealElements.forEach((element) => revealObserver.observe(element));
+
+    return () => revealObserver.disconnect();
+  }, []);
+
   return (
     <>
       {/* ── Global styles ── */}
@@ -256,6 +274,29 @@ export default function Home() {
 
         .fade-up {
           animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        [data-reveal] {
+          opacity: 0;
+          transform: translateY(28px);
+          filter: blur(6px);
+          transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.7s cubic-bezier(0.22,1,0.36,1);
+          will-change: opacity, transform, filter;
+        }
+
+        [data-reveal].is-visible {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          [data-reveal] {
+            opacity: 1;
+            transform: none;
+            filter: none;
+            transition: none;
+          }
         }
 
         .nav-link {
@@ -450,7 +491,7 @@ export default function Home() {
             position: "relative",
           }}>
             {/* Left copy */}
-            <div className="fade-up">
+            <div className="fade-up" data-reveal>
               <div className="section-label" style={{ marginBottom: 24 }}>
                 <Sparkles size={13} />
                 AI-Powered Career Intelligence
@@ -488,10 +529,6 @@ export default function Home() {
                   <Upload size={17} />
                   Upload CV — It&apos;s Free
                 </Link>
-                <Link href="/demo" className="cta-secondary">
-                  <PlayCircle size={17} />
-                  Watch Demo
-                </Link>
               </div>
 
               {/* Inline trust signals */}
@@ -522,7 +559,7 @@ export default function Home() {
         {/* ── How It Works ── */}
         <section id="how-it-works" style={{ padding: "100px 0" }}>
           <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 28px" }}>
-            <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <div style={{ textAlign: "center", marginBottom: 64 }} data-reveal>
               <div className="section-label" style={{ marginBottom: 16, display: "inline-flex" }}>
                 <Zap size={13} />
                 Simple 3-Step Process
@@ -567,7 +604,7 @@ export default function Home() {
                   desc: "Receive career matches, skill gap reports, and a personalized learning plan.",
                 },
               ].map(({ n, icon, title, desc }) => (
-                <div key={n} className="step-card">
+                <div key={n} className="step-card" data-reveal style={{ animationDelay: `${(n - 1) * 120}ms` }}>
                   <StepNumber n={n} />
                   <div style={{
                     width: 52,
@@ -597,7 +634,7 @@ export default function Home() {
         {/* ── Features ── */}
         <section id="features" style={{ padding: "100px 0" }}>
           <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 28px" }}>
-            <div style={{ marginBottom: 64 }}>
+            <div style={{ marginBottom: 64 }} data-reveal>
               <div className="section-label" style={{ marginBottom: 16 }}>
                 <Sparkles size={13} />
                 Core Capabilities
@@ -638,7 +675,7 @@ export default function Home() {
                   bullets: ["Coursera & Udemy links", "Time estimates", "Free resources first"],
                 },
               ].map(({ icon, color, title, desc, bullets }) => (
-                <div key={title} className="feature-card">
+                <div key={title} className="feature-card" data-reveal style={{ animationDelay: `${bullets.length * 30}ms` }}>
                   <div style={{
                     width: 48,
                     height: 48,
@@ -713,7 +750,7 @@ export default function Home() {
               pointerEvents: "none",
             }} />
 
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative" }} data-reveal>
               <div className="section-label" style={{ marginBottom: 20, display: "inline-flex" }}>
                 <Sparkles size={13} />
                 Start For Free
@@ -752,7 +789,7 @@ export default function Home() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}>
+          }} data-reveal>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <img
                 src="/logo-skillbridge.png"

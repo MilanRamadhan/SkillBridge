@@ -7,9 +7,6 @@ import {
   Briefcase,
   Target,
   BookOpen,
-  ChevronDown,
-  ChevronUp,
-  ExternalLink,
   Sparkles,
   AlertTriangle,
   CheckCircle2,
@@ -105,7 +102,6 @@ function CardHeader({ icon, color, title, subtitle, badge }: {
 /* ── Main ────────────────────────────────────────────────────── */
 export default function AnalysisPage() {
   const [result, setResult]       = useState<any>(null);
-  const [openLearn, setOpenLearn] = useState<number | null>(null);
 
   useEffect(() => {
     const data = sessionStorage.getItem("analysisResult");
@@ -419,90 +415,17 @@ const {
                     badge={`${learningItems.length} skill`}
                   />
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     {learningItems.map((item: any, i: number) => (
                       <div key={i} style={{
-                        borderRadius: 14, overflow: "hidden",
-                        border: openLearn === i
-                          ? "1px solid rgba(79,128,255,0.35)"
-                          : "1px solid rgba(148,163,184,0.16)",
-                        transition: "border-color 0.2s",
+                        padding: "12px 14px",
+                        borderRadius: 14,
+                        border: "1px solid rgba(148,163,184,0.16)",
+                        background: "rgba(248,251,255,0.65)",
                       }}>
-                        {/* Accordion header */}
-                        <button
-                          onClick={() => setOpenLearn(openLearn === i ? null : i)}
-                          style={{
-                            width: "100%", padding: "13px 16px",
-                            display: "flex", alignItems: "center", gap: 12,
-                            background: openLearn === i ? "rgba(239,246,255,0.8)" : "rgba(248,251,255,0.6)",
-                            border: "none", cursor: "pointer", textAlign: "left",
-                          }}
-                        >
-                          {/* Step number */}
-                          <div style={{
-                            width: 30, height: 30, borderRadius: 9, flexShrink: 0,
-                            background: "linear-gradient(135deg,#4f80ff,#60c2ff)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: 13, fontWeight: 700, color: "#fff",
-                            boxShadow: "0 4px 10px rgba(79,128,255,0.3)",
-                          }}>
-                            {i + 1}
-                          </div>
-
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>{item.skill}</div>
-                            <div style={{ fontSize: 12, color: "#64748b", marginTop: 1 }}>
-                              {item.resources?.length ?? 0} kursus tersedia
-                            </div>
-                          </div>
-
-                          {/* Missing indicator */}
-                          {openLearn === i
-                            ? <ChevronUp size={16} color="#64748b" />
-                            : <ChevronDown size={16} color="#64748b" />
-                          }
-                        </button>
-
-                        {/* Resources */}
-                        {openLearn === i && (
-                          <div>
-                            {item.resources?.length > 0 ? item.resources.map((res: any, j: number) => (
-                              <a key={j} href={res.url} target="_blank" rel="noopener noreferrer"
-                                style={{
-                                  display: "flex", alignItems: "center", gap: 12,
-                                  padding: "12px 16px 12px 58px",
-                                  borderTop: "1px solid rgba(148,163,184,0.12)",
-                                  textDecoration: "none",
-                                  background: "rgba(248,251,255,0.5)",
-                                  transition: "background 0.15s",
-                                }}
-                                onMouseEnter={e => (e.currentTarget.style.background = "rgba(239,246,255,0.9)")}
-                                onMouseLeave={e => (e.currentTarget.style.background = "rgba(248,251,255,0.5)")}
-                              >
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a", marginBottom: 2 }}>{res.title}</div>
-                                  <div style={{ fontSize: 12, color: "#64748b" }}>{res.provider}</div>
-                                </div>
-                                <div style={{
-                                  display: "inline-flex", alignItems: "center", gap: 5,
-                                  padding: "7px 14px", borderRadius: 10, flexShrink: 0,
-                                  background: "linear-gradient(135deg,#4f80ff,#60c2ff)",
-                                  color: "#fff", fontSize: 12, fontWeight: 600,
-                                  boxShadow: "0 4px 10px rgba(79,128,255,0.25)",
-                                }}>
-                                  Mulai <ExternalLink size={11} />
-                                </div>
-                              </a>
-                            )) : (
-                              <div style={{ padding: "14px 16px 14px 58px", borderTop: "1px solid rgba(148,163,184,0.12)" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                  <CheckCircle2 size={14} color="#34d399" />
-                                  <span style={{ fontSize: 13, color: "#64748b" }}>Belum ada resource tersedia untuk skill ini.</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
+                          {item.skill}
+                        </div>
                       </div>
                     ))}
                   </div>
