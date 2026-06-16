@@ -307,8 +307,8 @@ if (!result || !result.data) return (
 
 </div>
 
-          {/* ── SPLIT LAYOUT ── */}
-          <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start" }}>
+{/* ── SPLIT LAYOUT ATAS (2 KOLOM SEIMBANG) ── */}
+          <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 24, alignItems: "start", marginBottom: 24 }}>
 
             {/* KOLOM KIRI: Fokus ke Kekuatan Skill Internal Anda */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -362,10 +362,8 @@ if (!result || !result.data) return (
               )}
             </div>
 
-            {/* KOLOM KANAN: Rekomendasi Karir & Jalur Pembelajaran Berwujud Silabus */}
+            {/* KOLOM KANAN: Rekomendasi Karir Teratas */}
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-
-              {/* Career Recommendations */}
               {jobs.length > 0 && (
                 <Card>
                   <CardHeader
@@ -385,7 +383,6 @@ if (!result || !result.data) return (
                           padding: "18px", borderRadius: 16, background: "#ffffff", border: "1px solid #e2e8f0",
                           display: "flex", flexDirection: "column", gap: 12, transition: "all 0.2s ease"
                         }}>
-                          {/* PERUBAHAN LABEL PERSENTASE BAWAH (KEMIRIPAN KONTEKS) */}
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div style={{ fontSize: 15, fontWeight: 700, color: "#0f172a" }}>{getCareerTitle(job)}</div>
                             <div style={{ fontSize: 12, fontWeight: 700, color: barColor, background: `${barColor}10`, padding: "4px 10px", borderRadius: 8 }}>
@@ -399,7 +396,6 @@ if (!result || !result.data) return (
                             </div>
                           </div>
 
-                          {/* CATATAN KAKI ILMIAH OTOMATIS UNTUK DOSEN PENGUJI */}
                           <p style={{ fontSize: "11px", color: "#94a3b8", fontStyle: "italic", lineHeight: "1.4", margin: 0 }}>
                             *Skor mencerminkan kedekatan teks global dokumen CV Anda dengan pola iklan lowongan kerja menggunakan Cosine Similarity.
                           </p>
@@ -409,30 +405,38 @@ if (!result || !result.data) return (
                   </div>
                 </Card>
               )}
+            </div>
+          </div>
 
-              {/* SILABUS KURIKULUM PEMBELAJARAN ELEGAN */}
-              {learningItems.length > 0 && (
-                <Card>
-                  <CardHeader
-                    icon={<BookOpen size={20} color="#06b6d4" />}
-                    color="#06b6d4"
-                    title="Kurikulum Pembelajaran"
-                    subtitle="Rekomendasi silabus komprehensif untuk meningkatkan daya tawar CV."
-                  />
+          {/* ── LAYOUT BAWAH: KURIKULUM MELEBAR PENUH (FULL WIDTH GRID 2 KOLOM INTERNAL) ── */}
+          {learningItems.length > 0 && (
+            <div style={{ width: "100%", marginTop: 24 }}>
+              <Card>
+                <CardHeader
+                  icon={<BookOpen size={20} color="#06b6d4" />}
+                  color="#06b6d4"
+                  title="Kurikulum Pembelajaran"
+                  subtitle="Rekomendasi silabus komprehensif untuk meningkatkan daya tawar CV."
+                />
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                    {learningItems.map((item: any, i: number) => {
-                      const normalizedSkill = item.skill.toLowerCase().trim();
-                      const eduInfo = SKILL_EDUCATION_MAP[normalizedSkill] || SKILL_EDUCATION_MAP.default;
+                {/* Grid Internal: Otomatis membagi materi kurikulum menjadi 2 kolom kesamping */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: 20, marginTop: 16 }}>
+                  {learningItems.map((item: any, i: number) => {
+                    const normalizedSkill = item.skill.toLowerCase().trim();
+                    const eduInfo = SKILL_EDUCATION_MAP[normalizedSkill] || SKILL_EDUCATION_MAP.default;
 
-                      return (
-                        <div key={i} style={{
-                          padding: "24px",
-                          borderRadius: 18,
-                          border: "1px solid #e2e8f0",
-                          background: "#ffffff",
-                          boxShadow: "0 4px 12px rgba(15,23,42,0.02)",
-                        }}>
+                    return (
+                      <div key={i} style={{
+                        padding: "24px",
+                        borderRadius: 18,
+                        border: "1px solid #e2e8f0",
+                        background: "#ffffff",
+                        boxShadow: "0 4px 12px rgba(15,23,42,0.02)",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between"
+                      }}>
+                        <div>
                           {/* Nama Judul Modul Utama */}
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 12 }}>
                             <div style={{ fontSize: 16, fontWeight: 800, color: "#0f172a", textTransform: "capitalize" }}>
@@ -468,14 +472,14 @@ if (!result || !result.data) return (
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </Card>
-              )}
-
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
             </div>
-          </div>
+          )}
+
         </div>
       </main>
     </>
