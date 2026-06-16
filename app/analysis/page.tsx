@@ -158,24 +158,31 @@ export default function AnalysisPage() {
     }
   }, []);
 
-  if (!result || !result.data) return (
-    <>
-      <GlobalStyles />
-      <div style={{ minHeight: "100vh", background: "#f8fbff", display: "flex", alignItems: "center", justifycontent: "center", fontFamily: "Sora,sans-serif" }}>
-        <div style={{ textAlign: "center", padding: 40 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
-          <p style={{ color: "#48658f", marginBottom: 24, fontWeight: 500 }}>Tidak ada data analisis ditemukan.</p>
-          <Link href="/upload" style={{
-            display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 28px", borderRadius: 14,
-            background: "linear-gradient(135deg, #3b82f6, #60a5fa)", color: "#fff", fontWeight: 600, textDecoration: "none",
-            boxShadow: "0 10px 25px rgba(59,130,246,0.25)",
-          }}>
-            <ArrowLeft size={16} /> Upload CV Kembali
-          </Link>
-        </div>
+if (!result || !result.data) return (
+  <>
+    <GlobalStyles />
+    <div style={{ 
+      minHeight: "100vh", 
+      background: "#f8fbff", 
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center", /* 👈 DI SINI PERBAIKANNYA: Ganti 'justifycontent' menjadi 'justifyContent' */
+      fontFamily: "Sora,sans-serif" 
+    }}>
+      <div style={{ textAlign: "center", padding: 40 }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
+        <p style={{ color: "#48658f", marginBottom: 24, fontWeight: 500 }}>Tidak ada data analisis ditemukan.</p>
+        <Link href="/upload" style={{
+          display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 28px", borderRadius: 14,
+          background: "linear-gradient(135deg, #3b82f6, #60a5fa)", color: "#fff", fontWeight: 600, textDecoration: "none",
+          boxShadow: "0 10px 25px rgba(59,130,246,0.25)",
+        }}>
+          <ArrowLeft size={16} /> Upload CV Kembali
+        </Link>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
 
   const apiData = result.data;
   const { resume_parse, job_matches, gap_analysis, learning_recommendations } = apiData;
