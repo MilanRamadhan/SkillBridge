@@ -175,7 +175,7 @@ if (!result || !result.data) return (
         <Link href="/upload" style={{
           display: "inline-flex", alignItems: "center", gap: 8, padding: "14px 28px", borderRadius: 14,
           background: "linear-gradient(135deg, #3b82f6, #60a5fa)", color: "#fff", fontWeight: 600, textDecoration: "none",
-          boxShadow: "0 10px 25px rgba(59,130,246,0.25)",
+          boxShadow: "0 10px 25px rgba(59,130,246,0.25)",const response = await fetch
         }}>
           <ArrowLeft size={16} /> Upload CV Kembali
         </Link>

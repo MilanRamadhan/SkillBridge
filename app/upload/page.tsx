@@ -68,7 +68,7 @@ export default function UploadPage() {
       formData.append("file", file);
 
       const response = await fetch(
-        "http://localhost:8000/api/v1/analyze/full",
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/analyze/full`,
         {
           method: "POST",
           body: formData,
