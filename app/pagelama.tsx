@@ -9,7 +9,9 @@ import {
   GraduationCap,
   Briefcase,
   Sparkles,
+  TrendingUp,
   CheckCircle2,
+  ChevronRight,
   Upload,
   Zap,
   Target,
@@ -161,122 +163,6 @@ function StepNumber({ n }: { n: number }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero CV Visual component — HANYA KERTAS YANG BERUBAH JADI PUTIH PDF */
-/* ------------------------------------------------------------------ */
-function HeroCvVisual() {
-  const dataPoints = [
-    { label: "Python", delay: 0, top: "20%", left: "10%" },
-    { label: "AI Analysis", delay: 1, top: "55%", left: "70%" },
-    { label: "Project Manager", delay: 0.5, top: "80%", left: "20%" },
-    { label: "Gap Analysis", delay: 1.5, top: "40%", left: "85%" },
-  ];
-
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: 400,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        position: "relative",
-      }}
-    >
-      <div
-        className="cv-animation-container"
-        style={{
-          width: 280,
-          height: 380,
-          position: "relative",
-          animation: "heroBob 8s ease-in-out infinite",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: 0.1, 
-          }}
-        >
-          <FileText size={260} strokeWidth={0.5} color="#4f80ff" />
-        </div>
-
-        {/* Kertas Putih Bersih (Solid seperti Dokumen PDF Resmi) */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "#ffffff", 
-            border: "1px solid #cbd5e1", 
-            borderRadius: 16,
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)", 
-            padding: 24,
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            animation: "heroSway 10s ease-in-out infinite",
-          }}
-        >
-          {/* Header Bar PDF */}
-          <div style={{ height: 16, width: "45%", background: "#64748b", borderRadius: 2 }} />
-          <div style={{ height: 2, width: "100%", background: "#e2e8f0", margin: "4px 0" }} />
-          
-          {/* Baris Teks isi resume PDF (Warna teks abu-abu netral kertas) */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10, margin: "8px 0" }}>
-            {[85, 100, 90, 75, 85, 40].map((w, i) => (
-              <div key={i} style={{ height: 8, width: `${w}%`, background: "#94a3b8", opacity: 0.4, borderRadius: 2 }} />
-            ))}
-          </div>
-
-          {/* Kotak Mini Tag di bagian bawah dokumen */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: "auto" }}>
-            {["Next.js", "AI", "Sora", "Cap Proj"].map((s) => (
-              <span key={s} style={{ 
-                padding: "3px 8px", fontSize: 10, borderRadius: 4, 
-                background: "#f1f5f9", color: "#475569", fontWeight: 600,
-                border: "1px solid #e2e8f0"
-              }}>
-                {s}
-              </span>
-            ))}
-          </div>
-
-          {/* Efek Bayangan Pendaran Belakang yang Lembut */}
-          <div style={{
-            position: "absolute",
-            inset: -4,
-            zIndex: -1,
-            background: "rgba(15, 23, 42, 0.05)",
-            filter: "blur(12px)",
-            borderRadius: 20,
-          }}/>
-        </div>
-      </div>
-
-      {/* Floating data tags around */}
-      {dataPoints.map((point) => (
-        <div
-          key={point.label}
-          style={{
-            position: "absolute",
-            top: point.top,
-            left: point.left,
-            animation: `heroBobData 6s ease-in-out ${point.delay}s infinite`,
-            transform: "translate(-50%, -50%)",
-            pointerEvents: "none"
-          }}
-        >
-          <SkillPill label={point.label} color="#60c2ff" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* Main page                                                              */
 /* ------------------------------------------------------------------ */
 export default function Home() {
@@ -331,7 +217,7 @@ export default function Home() {
 
         body {
           font-family: 'Sora', sans-serif;
-          background: #f8fbff; /* KEMBALI KE WARNA ASLI ASAL */
+          background: #f8fbff;
           color: #0f172a;
           overflow-x: hidden;
         }
@@ -341,27 +227,49 @@ export default function Home() {
           50% { transform: translateY(-24px) scale(1.04); }
         }
 
-        @keyframes heroSway {
-          0%, 100% { transform: rotate(-1deg) translateX(0); }
-          50% { transform: rotate(1deg) translateX(5px); }
-        }
-        @keyframes heroBob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
-        }
-        @keyframes heroBobData {
-          0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-          50% { transform: translate(-50%, -50%) translateY(-10px); }
-        }
-
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(32px); }
           to   { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes shimmer {
+          0%   { background-position: -400px 0; }
+          100% { background-position: 400px 0; }
+        }
+
+        @keyframes pulse-ring {
+          0%   { transform: scale(0.94); opacity: 0.8; }
+          70%  { transform: scale(1.06); opacity: 0; }
+          100% { transform: scale(1.06); opacity: 0; }
+        }
+
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-16px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+
+        @keyframes giftBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px) scale(1.02); }
+        }
+
+        @keyframes ribbonWave {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(2px); }
+        }
+
+        @keyframes sparkleTwinkle {
+          0%, 100% { opacity: 0.35; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.12); }
+        }
+
+        .gift-sparkle {
+          animation: sparkleTwinkle 1.8s ease-in-out infinite;
         }
 
         .fade-up {
@@ -380,6 +288,15 @@ export default function Home() {
           opacity: 1;
           transform: translateY(0);
           filter: blur(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          [data-reveal] {
+            opacity: 1;
+            transform: none;
+            filter: none;
+            transition: none;
+          }
         }
 
         .nav-link {
@@ -409,6 +326,22 @@ export default function Home() {
         }
         .cta-primary:hover { opacity: 0.9; transform: translateY(-2px); }
 
+        .cta-secondary {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 28px;
+          border-radius: 14px;
+          background: rgba(15,23,42,0.05);
+          color: #0f172a;
+          font-weight: 500;
+          font-size: 15px;
+          text-decoration: none;
+          border: 1px solid rgba(148,163,184,0.18);
+          transition: background 0.2s, transform 0.2s;
+        }
+        .cta-secondary:hover { background: rgba(15,23,42,0.08); transform: translateY(-2px); }
+
         .feature-card {
           background: rgba(255,255,255,0.9);
           border: 1px solid rgba(148,163,184,0.18);
@@ -431,6 +364,14 @@ export default function Home() {
           box-shadow: 0 18px 50px rgba(15,23,42,0.06);
         }
         .step-card:hover { border-color: rgba(96,194,255,0.4); }
+
+        .stat-card {
+          background: rgba(255,255,255,0.92);
+          border: 1px solid rgba(148,163,184,0.16);
+          border-radius: 16px;
+          padding: 28px 32px;
+          box-shadow: 0 14px 40px rgba(15,23,42,0.05);
+        }
 
         .cursor-blink {
           animation: blink 1s step-end infinite;
@@ -510,11 +451,7 @@ export default function Home() {
             <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
               <a href="#how-it-works" className="nav-link">How It Works</a>
               <a href="#features" className="nav-link">Features</a>
-              
-              {/* ── DIUBAH DI SINI: Dari <a> mentah ke <Link href="/team"> Next.js ── */}
-              <Link href="/team" className="nav-link">
-                About
-              </Link>
+              <a href="#stats" className="nav-link">About</a>
             </div>
 
             <Link href="/upload" className="cta-primary" style={{ padding: "10px 22px", fontSize: 14 }}>
@@ -565,7 +502,7 @@ export default function Home() {
                 fontWeight: 800,
                 lineHeight: 1.08,
                 letterSpacing: "-0.03em",
-                color: "#0f172a",
+                  color: "#0f172a",
                 marginBottom: 20,
               }}>
                 Bridge Your Skills<br />
@@ -578,7 +515,7 @@ export default function Home() {
 
               <p style={{
                 fontSize: 17,
-                color: "#48658f",
+                  color: "#48658f",
                 lineHeight: 1.7,
                 maxWidth: 460,
                 marginBottom: 36,
@@ -614,10 +551,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right — The Animated Visual */}
-            <div className="fade-up" style={{ animationDelay: "0.15s" }}>
-              <HeroCvVisual />
-            </div>
+            {/* Right — Empty Space */}
+            <div className="fade-up" style={{ animationDelay: "0.15s" }}></div>
           </div>
         </section>
 
@@ -780,7 +715,7 @@ export default function Home() {
             maxWidth: 1200,
             margin: "0 auto",
             borderRadius: 28,
-            background: "linear-gradient(135deg, #eef5ff 0%, #f8fbff 50%, #eaf4ff 100%)",
+              background: "linear-gradient(135deg, #eef5ff 0%, #f8fbff 50%, #eaf4ff 100%)",
             border: "1px solid rgba(79,128,255,0.25)",
             padding: "72px 64px",
             textAlign: "center",

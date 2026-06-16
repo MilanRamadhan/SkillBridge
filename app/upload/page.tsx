@@ -6,9 +6,10 @@ import {
   FileText,
   Loader2,
   CheckCircle2,
+  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { data } from "framer-motion/m";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -18,347 +19,271 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analysisStep, setAnalysisStep] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Drag and Drop Handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile && (
+      droppedFile.type === "application/pdf" || 
+      droppedFile.name.endsWith(".doc") || 
+      droppedFile.name.endsWith(".docx")
+    )) {
+      setFile(droppedFile);
+    } else {
+      alert("Format file tidak didukung. Sediakan file PDF, DOC, atau DOCX.");
+    }
+  };
 
   const handleAnalyze = async () => {
-  if (!file) {
-    alert("Please upload your resume first");
-    return;
-  }
-
-  try {
-    setLoading(true);
-
-    setAnalysisStep("Uploading Resume");
-    setUploadProgress(10);
-
-    const progressInterval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 85) return prev;
-        return prev + 5;
-      });
-    }, 250);
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch(
-      "http://localhost:8000/api/v1/analyze/full",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to analyze resume");
+    if (!file) {
+      alert("Please upload your resume first");
+      return;
     }
 
-    setAnalysisStep("Extracting Skills");
-    setUploadProgress(90);
-    
-    const responseData = await response.json();
+    try {
+      setLoading(true);
+      setAnalysisStep("Uploading Resume");
+      setUploadProgress(10);
 
-    setAnalysisStep("Generating Learning Path");
-    setUploadProgress(95);
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 85) return prev;
+          return prev + 5;
+        });
+      }, 250);
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 700)
-    );
+      const formData = new FormData();
+      formData.append("file", file);
 
-    setAnalysisStep("Analysis Complete");
-    setUploadProgress(100);
+      const response = await fetch(
+        "http://localhost:8000/api/v1/analyze/full",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    clearInterval(progressInterval);
+      if (!response.ok) {
+        throw new Error("Failed to analyze resume");
+      }
 
-    sessionStorage.setItem(
-      "analysisResult",
-      JSON.stringify(responseData)
-    );
+      setAnalysisStep("Extracting Skills");
+      setUploadProgress(90);
+      
+      const responseData = await response.json();
 
-    setTimeout(() => {
-      router.push("/analysis");
-    }, 1200);
+      setAnalysisStep("Generating Learning Path");
+      setUploadProgress(95);
 
-  } catch (error) {
-    console.error(error);
-    alert("Analysis failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+      await new Promise((resolve) =>
+        setTimeout(resolve, 700)
+      );
+
+      setAnalysisStep("Analysis Complete");
+      setUploadProgress(100);
+
+      clearInterval(progressInterval);
+
+      sessionStorage.setItem(
+        "analysisResult",
+        JSON.stringify(responseData)
+      );
+
+      setTimeout(() => {
+        router.push("/analysis");
+      }, 1200);
+
+    } catch (error) {
+      console.error(error);
+      alert("Analysis failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#F8FBFF] px-6 py-24">
-      {/* Background Glow */}
-      <div className="absolute top-0 left-0 h-[400px] w-[400px] rounded-full bg-blue-400/20 blur-[140px]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#F8FBFF] px-6 py-20 font-sans">
+      {/* Background Glow Premium */}
+      <div className="absolute top-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-gradient-to-tr from-blue-300/20 to-indigo-300/10 blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] h-[600px] w-[600px] rounded-full bg-gradient-to-br from-cyan-300/20 to-blue-300/10 blur-[150px] pointer-events-none" />
 
-      <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-cyan-400/20 blur-[140px]" />
+      {/* Floating Back Button */}
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-6 left-6 z-20 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 backdrop-blur px-4 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300"
+      >
+        <ArrowLeft size={16} />
+        Kembali ke Beranda
+      </button>
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center rounded-full border border-blue-100 bg-white px-4 py-2 text-sm text-blue-600 shadow-sm mb-6">
-            Resume Analysis
+      <div className="relative z-10 max-w-6xl mx-auto mt-8">
+        {/* Header Section */}
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/50 px-4 py-1.5 text-xs font-semibold text-blue-600 shadow-sm tracking-wide uppercase mb-5">
+            <Sparkles size={12} className="text-blue-500 animate-pulse" />
+            AI Intelligence Report
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-bold text-slate-900 leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-none mb-6">
             Upload Your Resume
           </h1>
 
-          <p className="text-lg text-slate-600 leading-relaxed">
-            Discover your career path, identify skill gaps,
-            and receive a personalized learning roadmap
-            powered by AI.
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Temukan peta jalur karir optimal, identifikasi kesenjangan keahlian teknis, dan dapatkan kurikulum rekomendasi belajar instan bertenaga AI.
           </p>
         </div>
 
-        {/* Upload Card */}
-        <div
-          className="
-            max-w-3xl
-            mx-auto
-            rounded-[32px]
-            border
-            border-slate-200/70
-            bg-white/90
-            backdrop-blur-xl
-            p-8 md:p-10
-            shadow-[0_18px_50px_rgba(15,23,42,0.06)]
-          "
-        >
+        {/* Main Upload Card */}
+        <div className="max-w-2xl mx-auto rounded-[32px] border border-slate-200/60 bg-white/80 backdrop-blur-xl p-6 md:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.04)]">
+          
           <input
             ref={fileInputRef}
             type="file"
             accept=".pdf,.doc,.docx"
             className="hidden"
-            onChange={(e) =>
-              setFile(e.target.files?.[0] || null)
-            }
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
 
+          {/* Area Drop Zone Component */}
           {!file ? (
             <div
-              onClick={() =>
-                fileInputRef.current?.click()
-              }
-              className="
-                cursor-pointer
-                rounded-3xl
-                border-2
-                border-dashed
-                border-blue-200
-                p-14
-                text-center
-                transition-all
-                hover:border-[#4F80FF]
-                hover:bg-blue-50/50
-              "
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`cursor-pointer rounded-2xl border-2 border-dashed p-12 text-center transition-all duration-300 ${
+                isDragging 
+                  ? "border-blue-500 bg-blue-50/70 scale-[0.99]" 
+                  : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
+              }`}
             >
-              <Upload
-                size={52}
-                className="mx-auto mb-4 text-[#4F80FF]"
-              />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 transition-transform duration-300 group-hover:scale-110">
+                <Upload size={28} />
+              </div>
 
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                Upload Resume
+              <h3 className="text-lg font-bold text-slate-800 mb-1">
+                Pilih atau Seret Dokumen CV
               </h3>
 
-              <p className="text-slate-500">
-                Drag & drop your resume or click to browse
+              <p className="text-sm text-slate-400 max-w-sm mx-auto mb-4">
+                Klik untuk menelusuri berkas dari komputer Anda atau jatuhkan file langsung di sini.
               </p>
 
-              <p className="text-sm text-slate-400 mt-2">
-                Supported formats: PDF, DOC, DOCX
-              </p>
+              <span className="inline-block rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                Mendukung: PDF, DOC, DOCX
+              </span>
             </div>
           ) : (
-            <div className="rounded-3xl bg-blue-50 border border-blue-100 p-8 text-center">
-              <FileText
-                size={56}
-                className="mx-auto mb-4 text-[#4F80FF]"
-              />
+            /* Uploaded State Card */
+            <div className="rounded-2xl bg-gradient-to-b from-blue-50/50 to-blue-50/10 border border-blue-100 p-8 text-center animate-in fade-in zoom-in-95 duration-200">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 text-white shadow-md shadow-blue-500/20">
+                <FileText size={26} />
+              </div>
 
-              <h3 className="font-semibold text-slate-900">
-                Resume Uploaded
+              <h3 className="font-bold text-slate-800 text-base">
+                Resume Berhasil Diunggah
               </h3>
 
-              <p className="text-slate-600 mt-2">
+              <p className="text-sm font-medium text-blue-600 mt-1 truncate max-w-md mx-auto bg-white border border-blue-100/50 px-3 py-1 rounded-full shadow-sm">
                 {file.name}
               </p>
 
               <button
-                onClick={() =>
-                  fileInputRef.current?.click()
-                }
-                className="mt-4 text-sm text-blue-600 font-medium hover:underline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={loading}
+                className="mt-4 text-xs text-slate-400 font-semibold uppercase tracking-wider hover:text-blue-600 hover:underline transition-colors disabled:opacity-50"
               >
-                Change File
+                Ganti Dokumen File
               </button>
             </div>
           )}
 
+          {/* Loading Progress Section */}
           {loading && (
-  <div className="mt-8 rounded-3xl border border-blue-100 bg-blue-50/80 p-6">
-    <div className="flex justify-between mb-3">
-      <span className="font-medium text-slate-700">
-        {analysisStep}
-      </span>
+            <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50/40 p-5 animate-in slide-in-from-bottom-4 duration-300">
+              <div className="flex justify-between items-center mb-2.5">
+                <span className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Loader2 size={14} className="animate-spin text-blue-500" />
+                  {analysisStep}...
+                </span>
+                <span className="text-sm font-extrabold text-blue-600">
+                  {uploadProgress}%
+                </span>
+              </div>
 
-      <span className="font-semibold text-[#4F80FF]">
-        {uploadProgress}%
-      </span>
-    </div>
+              {/* Progress Track */}
+              <div className="h-2.5 w-100% overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
 
-    <div className="h-3 overflow-hidden rounded-full bg-blue-100">
-      <div
-        className="
-          h-full
-          rounded-full
-          bg-gradient-to-r
-          from-[#4F80FF]
-          to-[#60C2FF]
-          transition-all
-          duration-500
-        "
-        style={{
-          width: `${uploadProgress}%`,
-        }}
-      />
-    </div>
-
-    <div className="mt-5 space-y-3">
-      <div className="flex items-center gap-2 text-sm">
-        {uploadProgress >= 20 ? (
-          <CheckCircle2
-            size={16}
-            className="text-green-500"
-          />
-        ) : (
-          <div className="h-4 w-4 rounded-full border" />
-        )}
-        Resume Uploaded
-      </div>
-
-      <div className="flex items-center gap-2 text-sm">
-        {uploadProgress >= 40 ? (
-          <CheckCircle2
-            size={16}
-            className="text-green-500"
-          />
-        ) : (
-          <div className="h-4 w-4 rounded-full border" />
-        )}
-        Extracting Skills
-      </div>
-
-      <div className="flex items-center gap-2 text-sm">
-        {uploadProgress >= 60 ? (
-          <CheckCircle2
-            size={16}
-            className="text-green-500"
-          />
-        ) : (
-          <div className="h-4 w-4 rounded-full border" />
-        )}
-        Matching Career Paths
-      </div>
-
-      <div className="flex items-center gap-2 text-sm">
-        {uploadProgress >= 80 ? (
-          <CheckCircle2
-            size={16}
-            className="text-green-500"
-          />
-        ) : (
-          <div className="h-4 w-4 rounded-full border" />
-        )}
-        Building Learning Path
-      </div>
-
-      <div className="flex items-center gap-2 text-sm">
-        {uploadProgress >= 100 ? (
-          <CheckCircle2
-            size={16}
-            className="text-green-500"
-          />
-        ) : (
-          <div className="h-4 w-4 rounded-full border" />
-        )}
-        Finalizing Report
-      </div>
-    </div>
-  </div>
-)}
-          {/* CTA Button */}
-          <button
-          onClick={handleAnalyze}
-          disabled={!file || loading}
-          className="
-            mt-8
-            w-full
-            rounded-2xl
-            py-4
-            font-semibold
-            text-white
-            transition-all
-            shadow-lg
-            hover:scale-[1.01]
-            hover:shadow-xl
-            disabled:opacity-60
-            disabled:cursor-not-allowed
-            bg-gradient-to-r
-            from-[#4F80FF]
-            to-[#60C2FF]
-          "
-        >
-          {loading ? (
-            <div className="flex items-center justify-center gap-2">
-              <Loader2
-                size={18}
-                className="animate-spin"
-              />
-              AI is analyzing your resume...
+              {/* Dynamic Checkpoints Indicator */}
+              <div className="mt-5 pt-4 border-t border-blue-100/40 space-y-2.5">
+                {[
+                  { label: "Resume Uploaded", target: 20 },
+                  { label: "Extracting Skills", target: 40 },
+                  { label: "Matching Career Paths", target: 60 },
+                  { label: "Building Learning Path", target: 80 },
+                  { label: "Finalizing AI Report", target: 100 }
+                ].map((step, idx) => (
+                  <div key={idx} className={`flex items-center gap-2.5 text-xs font-medium transition-colors ${
+                    uploadProgress >= step.target ? "text-slate-800" : "text-slate-400"
+                  }`}>
+                    {uploadProgress >= step.target ? (
+                      <CheckCircle2 size={14} className="text-green-500 flex-shrink-0" />
+                    ) : (
+                      <div className="h-3.5 w-3.5 rounded-full border border-slate-200 bg-white flex-shrink-0" />
+                    )}
+                    {step.label}
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
-            "Analyze Resume"
           )}
-        </button>
+
+          {/* Submit CTA Analyze Button */}
+          <button
+            onClick={handleAnalyze}
+            disabled={!file || loading}
+            className="mt-6 w-full rounded-2xl py-4 font-bold text-sm tracking-wide text-white shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-blue-600 to-blue-400 hover:shadow-lg hover:shadow-blue-500/15 disabled:hover:scale-100"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Loader2 size={16} className="animate-spin" />
+                Memproses Analisis CV Anda...
+              </div>
+            ) : (
+              "Mulai Analisis Sekarang"
+            )}
+          </button>
         </div>
 
-        {/* Feature Highlights */}
-        <div className="grid md:grid-cols-3 gap-6 mt-14 max-w-5xl mx-auto">
-          <div className="rounded-3xl bg-white/80 backdrop-blur border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Career Recommendation
-            </h3>
-
-            <p className="text-sm text-slate-600">
-              Discover career paths that match your
-              experience and skills.
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white/80 backdrop-blur border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Skill Gap Analysis
-            </h3>
-
-            <p className="text-sm text-slate-600">
-              Identify missing skills required to reach
-              your target role.
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white/80 backdrop-blur border border-slate-200 p-6">
-            <h3 className="font-semibold text-slate-900 mb-2">
-              Learning Path
-            </h3>
-
-            <p className="text-sm text-slate-600">
-              Get curated learning resources and
-              actionable recommendations.
-            </p>
-          </div>
+        {/* Feature Highlights Grid */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 mt-16 max-w-4xl mx-auto">
+          {[
+            { title: "Career Recommendation", desc: "Temukan alternatif jalur karir paling relevan dengan profil latar belakang pengalaman Anda." },
+            { title: "Skill Gap Analysis", desc: "Identifikasi langsung kekurangan indikator skill teknis untuk mencapai standar posisi target." },
+            { title: "Personalized Learning Path", desc: "Dapatkan penyusunan silabus pembelajaran terarah beserta pelengkap materi referensinya." }
+          ].map((item, index) => (
+            <div key={index} className="rounded-2xl bg-white border border-slate-200/60 p-5 shadow-[0_4px_20px_rgba(15,23,42,0.01)] hover:border-slate-300 transition-colors">
+              <h3 className="font-bold text-slate-800 text-sm mb-1.5">{item.title}</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </main>
